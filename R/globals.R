@@ -19,20 +19,6 @@ MESI_LUNGHI <- c(
 
 TIPO_ENTRATE <- c("Stipendio", "Extra")
 
-TIPO_USCITE  <- c(
-  "Alimentari",
-  "Automobile",
-  "Mutuo",
-  "Scuola",
-  "Sport",
-  "Vacanze",
-  "Svago",
-  "Videogames",
-  "Utenze",
-  "Abbonamenti",
-  "Casa"
-)
-
 COLORI_USCITE <- c(
   Alimentari  = "#e74c3c",
   Automobile  = "#e67e22",
