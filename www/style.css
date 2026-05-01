@@ -1,0 +1,340 @@
+/* ── Root ────────────────────────────────────────────────────────────────── */
+:root {
+  --navy:    #1e3a5f;
+  --orange:  #f5a623;
+  --green:   #27ae60;
+  --red:     #e74c3c;
+  --bg:      #f0f2f5;
+  --card-bg: #ffffff;
+}
+
+body {
+  background-color: var(--bg);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── Navbar ──────────────────────────────────────────────────────────────── */
+.navbar {
+  background-color: var(--navy) !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,.25);
+}
+.navbar-brand {
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: .5px;
+}
+.navbar-brand i { color: var(--orange); }
+.navbar .nav-link {
+  color: rgba(255,255,255,.75) !important;
+  font-weight: 500;
+  padding: .5rem 1rem;
+  transition: color .15s;
+}
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+  color: #fff !important;
+}
+.navbar .nav-link.active {
+  border-bottom: 3px solid var(--orange);
+}
+
+/* ── KPI Banner ──────────────────────────────────────────────────────────── */
+.kpi-banner {
+  background: var(--navy);
+  border-radius: 14px;
+  padding: 1.5rem 2rem;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  color: #fff;
+}
+.kpi-main { flex: 1; min-width: 200px; }
+.kpi-side {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+.kpi-label {
+  font-size: .78rem;
+  opacity: .7;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  margin-bottom: .15rem;
+}
+.kpi-value {
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -1px;
+}
+.kpi-value-sm {
+  font-size: 1.7rem;
+  font-weight: 700;
+  line-height: 1.1;
+}
+.kpi-hint {
+  font-size: .75rem;
+  opacity: .6;
+  margin-top: .15rem;
+}
+.kpi-sub {
+  color: var(--orange);
+  font-size: .85rem;
+  margin-top: .25rem;
+}
+.kpi-box {
+  background: rgba(255,255,255,.1);
+  border-radius: 10px;
+  padding: .8rem 1.2rem;
+  min-width: 160px;
+}
+
+/* ── Cards ───────────────────────────────────────────────────────────────── */
+.card {
+  border: 1px solid #e2e6ea;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.card-header {
+  background: #fff;
+  border-bottom: 1px solid #f0f2f5;
+  font-weight: 600;
+  border-radius: 12px 12px 0 0 !important;
+  padding: .85rem 1.25rem;
+}
+
+/* ── Saldo strip ─────────────────────────────────────────────────────────── */
+.saldo-strip {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: .75rem 1rem;
+  scrollbar-width: thin;
+}
+.saldo-tile {
+  min-width: 82px;
+  text-align: center;
+  background: #fafbfc;
+  border-radius: 8px;
+  padding: .65rem .4rem;
+  border: 1px solid #e2e6ea;
+  flex-shrink: 0;
+  transition: border-color .15s;
+}
+.saldo-tile--current {
+  border: 2px solid var(--navy);
+  background: #eef2f8;
+}
+.tile-mese {
+  font-size: .72rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  margin-bottom: .15rem;
+}
+.tile-valore {
+  font-size: 1rem;
+  font-weight: 700;
+}
+.tile-prev {
+  font-size: .65rem;
+  color: #adb5bd;
+  margin-top: .1rem;
+}
+
+/* ── Accordion (Entrate/Uscite) ───────────────────────────────────────────── */
+.acc-item {
+  background: #fff;
+  border: 1px solid #e2e6ea;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.acc-item--open {
+  border-color: var(--navy);
+  box-shadow: 0 2px 8px rgba(30,58,95,.1);
+}
+.acc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .9rem 1.2rem;
+  cursor: pointer;
+  user-select: none;
+  transition: background .1s;
+}
+.acc-header:hover { background: #f8f9fa; }
+.acc-title {
+  font-weight: 600;
+  font-size: .95rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.acc-totals {
+  font-size: .88rem;
+  display: flex;
+  gap: 1rem;
+}
+.acc-body {
+  padding: 1rem 1.2rem 1.2rem;
+  border-top: 1px solid #f0f2f5;
+}
+.item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .3rem 0;
+  border-bottom: 1px solid #f8f9fa;
+  font-size: .9rem;
+}
+.item-row:last-child { border-bottom: none; }
+.item-tipo { color: #495057; }
+.item-actions { display: flex; align-items: center; gap: .5rem; }
+.item-importo { font-weight: 600; }
+.btn-del {
+  padding: 2px 6px !important;
+  line-height: 1.2;
+  font-size: .75rem !important;
+}
+.btn-add {
+  background-color: var(--green);
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  padding: .35rem 1rem;
+  font-size: .82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .15s;
+}
+.btn-add:hover { background-color: #219150; color: #fff; }
+.btn-add--red { background-color: var(--red); }
+.btn-add--red:hover { background-color: #c0392b; }
+.badge-corrente {
+  background-color: var(--orange);
+  color: #fff;
+  border-radius: 12px;
+  padding: 2px 9px;
+  font-size: .72rem;
+  font-weight: 600;
+}
+
+/* ── Vista Annuale ───────────────────────────────────────────────────────── */
+.va-kpi {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e2e6ea;
+  padding: 1rem 1.25rem;
+}
+.va-kpi--accent {
+  border-color: var(--navy);
+  background: #eef2f8;
+}
+.va-kpi-label {
+  font-size: .78rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  margin-bottom: .25rem;
+}
+.va-kpi-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+.month-card {
+  background: #fff;
+  border-radius: 10px;
+  border: 1px solid #e2e6ea;
+  padding: .9rem 1rem;
+  height: 100%;
+  font-size: .88rem;
+}
+.month-card--current {
+  border: 2px solid var(--navy);
+  background: #eef2f8;
+}
+.month-card-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: .6rem;
+}
+.month-name {
+  font-weight: 700;
+  font-size: .95rem;
+}
+.month-row {
+  display: flex;
+  justify-content: space-between;
+  padding: .12rem 0;
+}
+.month-row-label { color: #6c757d; }
+.month-row-val { font-weight: 500; }
+.month-cap {
+  font-size: .78rem;
+  color: #495057;
+}
+.cap-init-box {
+  display: flex;
+  align-items: center;
+  font-size: .88rem;
+  color: #6c757d;
+}
+.cap-init-label { margin-right: .4rem; }
+
+/* ── Simulazione ─────────────────────────────────────────────────────────── */
+.scenario-card {
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e2e6ea;
+  padding: 1.25rem 1.5rem;
+  height: 100%;
+}
+.scenario-card--sim {
+  border-color: var(--orange);
+  background: #fffbf0;
+}
+.scenario-label {
+  font-weight: 700;
+  font-size: .95rem;
+  color: #495057;
+  margin-bottom: .4rem;
+}
+.scenario-card--base .scenario-label { color: var(--navy); }
+.scenario-card--sim  .scenario-label { color: #b7710a; }
+.sc-sub { font-size: .75rem; color: #6c757d; }
+.sc-val { font-size: 1.3rem; font-weight: 700; }
+.sim-row {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  padding: .35rem 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+.sim-row:last-child { border-bottom: none; }
+.sim-label { min-width: 110px; font-size: .88rem; }
+.sim-from  { min-width: 65px; text-align: right; }
+.sim-arrow { color: #adb5bd; }
+.sim-to .form-control {
+  font-size: .85rem;
+  padding: .2rem .5rem;
+  height: 30px;
+}
+.sim-to label { display: none; }
+.riep-row {
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .25rem 0;
+  font-size: .9rem;
+}
+.riep-row > span:first-child { flex: 1; }
+
+/* ── Modal ───────────────────────────────────────────────────────────────── */
+.modal-title-custom { font-weight: 700; }
+.modal-content { border-radius: 14px; }
+
+/* ── Utilities ───────────────────────────────────────────────────────────── */
+.text-success { color: var(--green) !important; }
+.text-danger  { color: var(--red)   !important; }

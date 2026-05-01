@@ -1,0 +1,4 @@
+data/
+.claude/
+run.Rout
+renv/
