@@ -2,3 +2,4 @@
 .claude/
 run.Rout
 renv/
+.Rprofile

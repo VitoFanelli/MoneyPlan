@@ -109,7 +109,7 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
           hc_title(text = "Nessun dato", style = list(color = "#adb5bd")) |>
           hc_credits(enabled = FALSE))
       }
-      colori <- unname(COLORI_USCITE[cat_df$tipologia])
+      colori <- unname(rv$colori_uscite[cat_df$tipologia])
       colori[is.na(colori)] <- "#95a5a6"
 
       hc_data <- lapply(seq_len(nrow(cat_df)), function(i) {

@@ -143,6 +143,10 @@ mod_entrate_uscite_server <- function(id, rv) {
 
     # ── Modal Entrata ──────────────────────────────────────────────────────────
     observeEvent(input$open_e, {
+      if (length(rv$tipi_entrate) == 0) {
+        showNotification("Aggiungi prima una tipologia di entrata nella Configurazione.", type = "warning")
+        return()
+      }
       mese_pre <- input$open_e
       showModal(modalDialog(
         title = tags$h5(class = "modal-title-custom", "Nuova Entrata"),
@@ -156,12 +160,11 @@ mod_entrate_uscite_server <- function(id, rv) {
           pickerInput(
             inputId  = ns("tipo_e"),
             label    = "Tipologia",
-            choices  = TIPO_ENTRATE,
-            selected = "Stipendio",
+            choices  = sort(rv$tipi_entrate),
+            selected = head(rv$tipi_entrate, 1),
             multiple = FALSE,
             options  = pickerOptions(
               liveSearch  = FALSE,
-              size        = 8,
               style       = "btn-outline-primary"
             )
           ),
@@ -214,6 +217,10 @@ mod_entrate_uscite_server <- function(id, rv) {
 
     # ── Modal Uscita ───────────────────────────────────────────────────────────
     observeEvent(input$open_u, {
+      if (length(rv$tipi_uscite) == 0) {
+        showNotification("Aggiungi prima una tipologia di uscita nella Configurazione.", type = "warning")
+        return()
+      }
       mese_pre <- input$open_u
       showModal(modalDialog(
         title = tags$h5(class = "modal-title-custom", "Nuova Uscita"),
@@ -227,12 +234,11 @@ mod_entrate_uscite_server <- function(id, rv) {
           pickerInput(
             inputId  = ns("tipo_u"),
             label    = "Tipologia",
-            choices  = TIPO_USCITE,
-            selected = "Alimentari",
+            choices  = sort(rv$tipi_uscite),
+            selected = head(rv$tipi_uscite, 1),
             multiple = FALSE,
             options  = pickerOptions(
               liveSearch  = FALSE,
-              size        = 10,
               style       = "btn-outline-primary"
             )
           ),

@@ -1,10 +1,37 @@
-MESI_BREVI  <- c("Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic")
-MESI_LUNGHI <- c("Gennaio","Febbraio","Marzo","Aprile","Maggio","Giugno",
-                 "Luglio","Agosto","Settembre","Ottobre","Novembre","Dicembre")
+MESI_BREVI  <- c(
+  "Gen", "Feb", "Mar", "Apr", "Mag", "Giu", "Lug", "Ago", "Set", "Ott", "Nov", "Dic"
+)
 
-TIPO_ENTRATE <- c("Stipendio","Bonus","Welfare","Extra")
-TIPO_USCITE  <- c("Alimentari","Automobile","Mutuo","Scuola","Sport","Vacanze","Svago","Videogames",
-                  "Utenze","Abbonamenti","Casa")
+MESI_LUNGHI <- c(
+  "Gennaio",
+  "Febbraio",
+  "Marzo",
+  "Aprile",
+  "Maggio",
+  "Giugno",
+  "Luglio",
+  "Agosto",
+  "Settembre",
+  "Ottobre",
+  "Novembre",
+  "Dicembre"
+)
+
+TIPO_ENTRATE <- c("Stipendio", "Extra")
+
+TIPO_USCITE  <- c(
+  "Alimentari",
+  "Automobile",
+  "Mutuo",
+  "Scuola",
+  "Sport",
+  "Vacanze",
+  "Svago",
+  "Videogames",
+  "Utenze",
+  "Abbonamenti",
+  "Casa"
+)
 
 COLORI_USCITE <- c(
   Alimentari  = "#e74c3c",
@@ -18,6 +45,13 @@ COLORI_USCITE <- c(
   Utenze      = "#e67e22",
   Abbonamenti = "#f39c12",
   Casa        = "#d35400"
+)
+
+PALETTE_COLORI <- c(
+  "#e74c3c", "#3498db", "#2ecc71", "#f1c40f", "#9b59b6",
+  "#e67e22", "#1abc9c", "#e91e63", "#00bcd4", "#ff5722",
+  "#8bc34a", "#673ab7", "#ff9800", "#607d8b", "#795548",
+  "#f06292", "#4fc3f7", "#a5d6a7", "#ffcc02", "#ce93d8"
 )
 
 mese_corrente <- as.integer(format(Sys.Date(), "%m"))

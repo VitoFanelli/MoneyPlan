@@ -55,3 +55,46 @@ save_capitale <- function(cap) {
   .ensure_dir()
   .write_f(tibble(capitale_iniziale = as.numeric(cap)), .fpath("config"))
 }
+
+# ── Tipologie ────────────────────────────────────────────────────────────────
+
+default_tipi <- function() {
+  n_e <- length(TIPO_ENTRATE)
+  dplyr::bind_rows(
+    tibble::tibble(
+      tipo   = "entrata",
+      nome   = TIPO_ENTRATE,
+      colore = PALETTE_COLORI[(seq_len(n_e) - 1L) %% length(PALETTE_COLORI) + 1L]
+    ),
+    tibble::tibble(
+      tipo   = "uscita",
+      nome   = names(COLORI_USCITE),
+      colore = unname(COLORI_USCITE)
+    )
+  )
+}
+
+next_colore <- function(tipo_val, tipi_df) {
+  usati <- tipi_df |> dplyr::filter(tipo == tipo_val) |> dplyr::pull(colore)
+  for (c in PALETTE_COLORI) {
+    if (!(c %in% usati)) return(c)
+  }
+  PALETTE_COLORI[(length(usati)) %% length(PALETTE_COLORI) + 1L]
+}
+
+load_tipi <- function() {
+  p <- .fpath("tipi")
+  if (!file.exists(p)) return(default_tipi())
+  tryCatch({
+    df <- .read_f(p)
+    df$tipo   <- as.character(df$tipo)
+    df$nome   <- as.character(df$nome)
+    df$colore <- as.character(df$colore)
+    df
+  }, error = function(e) default_tipi())
+}
+
+save_tipi <- function(df) {
+  .ensure_dir()
+  .write_f(df, .fpath("tipi"))
+}

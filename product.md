@@ -8,7 +8,7 @@ Impostando le proprie entrate e uscite mensili, permette di conoscere il risparm
 e di pianificare eventuali uscite straordinarie simulando ciò che accadrebbe al proprio capitale.
 I mesi sono di un anno generico.
 
-## 2. Funzionalità
+## 2. Requisiti
 
 1. Inserimento entrate per tipologia (stipendio, bonus, welfare, extra), mese e euro
 2. Inserimento uscite per tipologia (alimentari, automobile, mutuo, scuola, sport, vacanze, svago, videogames), mese e euro

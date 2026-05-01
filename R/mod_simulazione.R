@@ -109,14 +109,15 @@ mod_simulazione_server <- function(id, rv, mensile, capitale_df) {
       if (!sim_vals$computed) {
         be <- base_e_avgs()
         bu <- base_u_avgs()
-        # Ensure all categories are represented (as.numeric strips names from be[t])
+        te <- rv$tipi_entrate
+        tu <- rv$tipi_uscite
         e_init <- setNames(
-          sapply(TIPO_ENTRATE, function(t) { v <- be[t]; if (length(v)==1 && !is.na(v)) as.numeric(v) else 0 }),
-          TIPO_ENTRATE
+          sapply(te, function(t) { v <- be[t]; if (length(v)==1 && !is.na(v)) as.numeric(v) else 0 }),
+          te
         )
         u_init <- setNames(
-          sapply(TIPO_USCITE,  function(t) { v <- bu[t]; if (length(v)==1 && !is.na(v)) as.numeric(v) else 0 }),
-          TIPO_USCITE
+          sapply(tu, function(t) { v <- bu[t]; if (length(v)==1 && !is.na(v)) as.numeric(v) else 0 }),
+          tu
         )
         sim_vals$e <- e_init
         sim_vals$u <- u_init
@@ -124,26 +125,33 @@ mod_simulazione_server <- function(id, rv, mensile, capitale_df) {
       }
     })
 
-    # Reset
+    # Reset manuale
     observeEvent(input$reset_sim, {
       sim_vals$computed <- FALSE
     })
 
+    # Reset automatico quando cambiano le tipologie
+    observeEvent({rv$tipi_entrate; rv$tipi_uscite}, {
+      sim_vals$computed <- FALSE
+    }, ignoreInit = TRUE)
+
     # Ricalcola — read input values and update sim_vals
     observeEvent(input$ricalcola, {
+      te <- rv$tipi_entrate
+      tu <- rv$tipi_uscite
       new_e <- setNames(
-        sapply(TIPO_ENTRATE, function(t) {
+        sapply(te, function(t) {
           val <- input[[paste0("sim_e_", t)]]
           if (is.null(val) || is.na(val)) 0 else as.numeric(val)
         }),
-        TIPO_ENTRATE
+        te
       )
       new_u <- setNames(
-        sapply(TIPO_USCITE, function(t) {
+        sapply(tu, function(t) {
           val <- input[[paste0("sim_u_", t)]]
           if (is.null(val) || is.na(val)) 0 else as.numeric(val)
         }),
-        TIPO_USCITE
+        tu
       )
       sim_vals$e <- new_e
       sim_vals$u <- new_u
@@ -178,11 +186,12 @@ mod_simulazione_server <- function(id, rv, mensile, capitale_df) {
     # ── Editor Entrate ─────────────────────────────────────────────────────────
     output$editor_e <- renderUI({
       req(sim_vals$e)
-      be  <- base_e_avgs()
+      be <- base_e_avgs()
+      te <- rv$tipi_entrate
       div(
-        lapply(TIPO_ENTRATE, function(t) {
+        lapply(te, function(t) {
           base_v <- if (!is.null(be[t]) && !is.na(be[t])) round(be[t]) else 0
-          sim_v  <- round(sim_vals$e[[t]])
+          sim_v  <- if (!is.null(sim_vals$e[[t]])) round(sim_vals$e[[t]]) else 0
           div(
             class = "sim-row",
             span(class = "sim-label", t),
@@ -209,10 +218,11 @@ mod_simulazione_server <- function(id, rv, mensile, capitale_df) {
     output$editor_u <- renderUI({
       req(sim_vals$u)
       bu <- base_u_avgs()
+      tu <- rv$tipi_uscite
       div(
-        lapply(TIPO_USCITE, function(t) {
+        lapply(tu, function(t) {
           base_v <- if (!is.null(bu[t]) && !is.na(bu[t])) round(bu[t]) else 0
-          sim_v  <- round(sim_vals$u[[t]])
+          sim_v  <- if (!is.null(sim_vals$u[[t]])) round(sim_vals$u[[t]]) else 0
           div(
             class = "sim-row",
             span(class = "sim-label", t),
