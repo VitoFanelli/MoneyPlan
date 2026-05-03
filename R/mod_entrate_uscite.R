@@ -17,8 +17,8 @@ mod_entrate_uscite_server <- function(id, rv) {
     output$accordion <- renderUI({
       m_ap <- mese_aperto()
       lapply(1:12, function(i) {
-        e_m <- rv$entrate |> filter(mese == i)
-        u_m <- rv$uscite  |> filter(mese == i)
+        e_m <- rv$entrate |> filter(mese == i) |> arrange(desc(importo))
+        u_m <- rv$uscite  |> filter(mese == i) |> arrange(desc(importo))
         tot_e <- sum(e_m$importo)
         tot_u <- sum(u_m$importo)
         is_open <- identical(m_ap, i)

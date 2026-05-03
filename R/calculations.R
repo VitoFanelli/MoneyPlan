@@ -32,13 +32,14 @@ df_capitale <- function(mensile, cap_init) {
 }
 
 media_risparmio <- function(mensile) {
-  dati <- mensile |> filter(mese <= mese_corrente, tot_e > 0 | tot_u > 0)
+  dati <- mensile |> filter(mese < mese_corrente, tot_e > 0 | tot_u > 0)
   if (nrow(dati) == 0) return(0)
   mean(dati$saldo)
 }
 
-capitale_attuale <- function(capitale_df) {
-  capitale_df$capitale[min(mese_corrente, 12)]
+capitale_attuale <- function(capitale_df, cap_init = 0) {
+  m <- mese_corrente - 1
+  if (m < 1) cap_init else capitale_df$capitale[m]
 }
 
 uscite_per_categoria <- function(uscite) {

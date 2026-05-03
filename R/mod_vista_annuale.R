@@ -81,7 +81,7 @@ mod_vista_annuale_server <- function(id, rv, mensile, capitale_df) {
           saldo_i <- m$saldo[i]
           cap_i   <- cap$capitale[i]
           is_cur  <- (i == mese_corrente)
-          is_fut  <- (i > mese_corrente)
+          is_fut  <- (i >= mese_corrente)
           col_s   <- col_saldo(saldo_i)
           pct     <- if (m$tot_e[i] > 0)
             min(100, round(m$tot_u[i] / m$tot_e[i] * 100))
@@ -95,7 +95,7 @@ mod_vista_annuale_server <- function(id, rv, mensile, capitale_df) {
               div(
                 class = "month-card-header",
                 span(class = "month-name", MESI_BREVI[i]),
-                if (is_cur) span(class = "badge-corrente ms-auto", "corrente") else NULL
+                NULL
               ),
               # Body
               div(class = "month-row",
