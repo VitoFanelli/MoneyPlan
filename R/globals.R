@@ -44,7 +44,16 @@ mese_corrente <- as.integer(format(Sys.Date(), "%m"))
 
 fmt_eur <- function(x) {
   if (is.null(x) || (length(x) == 1 && is.na(x))) return("€ —")
-  paste0("€ ", formatC(round(x), format = "d", big.mark = "."))
+  paste0("€ ", formatC(round(x), format = "d", big.mark = "."))
+}
+
+fmt_eur_compact <- function(x) {
+  if (is.null(x) || (length(x) == 1 && is.na(x))) return("—")
+  x <- round(x)
+  if (abs(x) >= 1000)
+    paste0(formatC(x / 1000, format = "f", digits = 1), "k")
+  else
+    as.character(x)
 }
 
 fmt_saldo <- function(x) {

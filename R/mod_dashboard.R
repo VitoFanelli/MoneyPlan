@@ -43,32 +43,11 @@ mod_dashboard_ui <- function(id) {
       )
     ),
 
-    # ── Charts ────────────────────────────────────────────────────────────────
-    div(
-      class = "row g-3 mb-3",
-      div(
-        class = "col-lg-8",
-        card(
-          full_screen = FALSE,
-          card_header("Entrate vs Uscite mensili"),
-          highchartOutput(ns("chart_bar"), height = "320px")
-        )
-      ),
-      div(
-        class = "col-lg-4",
-        card(
-          full_screen = FALSE,
-          card_header("Distribuzione uscite"),
-          highchartOutput(ns("chart_donut"), height = "320px")
-        )
-      )
-    ),
-
-    # ── Saldo strip ───────────────────────────────────────────────────────────
+    # ── Card per mese: entrate/uscite + saldo ─────────────────────────────────
     card(
       class = "mb-3",
-      card_header("Saldo per mese"),
-      uiOutput(ns("saldo_strip"))
+      card_header("Entrate / Uscite per mese"),
+      uiOutput(ns("mese_cards"))
     ),
 
     # ── Capitale trend ────────────────────────────────────────────────────────
@@ -108,68 +87,73 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
       fmt_eur(cap$capitale[12])
     })
 
-    # Bar chart
-    output$chart_bar <- renderHighchart({
-      m <- mensile()
-      highchart() |>
-        hc_chart(type = "column") |>
-        hc_xAxis(categories = MESI_BREVI, crosshair = TRUE) |>
-        hc_yAxis(title = list(text = "€"), labels = list(format = "€{value}")) |>
-        hc_plotOptions(column = list(groupPadding = 0.1, borderRadius = 3)) |>
-        hc_add_series(name = "Entrate", data = m$tot_e, color = "#27ae60") |>
-        hc_add_series(name = "Uscite",  data = m$tot_u, color = "#e74c3c") |>
-        hc_tooltip(shared = TRUE, valuePrefix = "€ ", valueDecimals = 0) |>
-        hc_legend(enabled = TRUE, align = "right", verticalAlign = "top") |>
-        hc_credits(enabled = FALSE)
-    })
+    # Card mensili: barre entrate/uscite + saldo
+    output$mese_cards <- renderUI({
+      m       <- mensile()
+      max_val <- max(c(m$tot_e, m$tot_u, 1), na.rm = TRUE)
 
-    # Donut chart
-    output$chart_donut <- renderHighchart({
-      cat_df <- uscite_per_categoria(rv$uscite)
-      if (nrow(cat_df) == 0) {
-        return(highchart() |>
-          hc_title(text = "Nessun dato", style = list(color = "#adb5bd")) |>
-          hc_credits(enabled = FALSE))
-      }
-      colori <- unname(rv$colori_uscite[cat_df$tipologia])
-      colori[is.na(colori)] <- "#95a5a6"
-
-      hc_data <- lapply(seq_len(nrow(cat_df)), function(i) {
-        list(name = cat_df$tipologia[i], y = cat_df$tot[i], color = colori[i])
-      })
-
-      highchart() |>
-        hc_chart(type = "pie") |>
-        hc_plotOptions(pie = list(
-          innerSize = "58%",
-          dataLabels = list(enabled = FALSE),
-          showInLegend = TRUE
-        )) |>
-        hc_add_series(
-          name = "Uscite",
-          data = hc_data
-        ) |>
-        hc_legend(enabled = TRUE, layout = "vertical", align = "right", verticalAlign = "middle") |>
-        hc_tooltip(pointFormat = "<b>{point.name}</b>: € {point.y:,.0f}<br/>({point.percentage:.1f}%)") |>
-        hc_credits(enabled = FALSE)
-    })
-
-    # Saldo strip
-    output$saldo_strip <- renderUI({
-      m  <- mensile()
-      tiles <- lapply(1:12, function(i) {
-        s   <- m$saldo[i]
-        col <- col_saldo(s)
+      cards <- lapply(1:12, function(i) {
+        e     <- m$tot_e[i]
+        u     <- m$tot_u[i]
+        s     <- m$saldo[i]
+        pct_e <- round(max(e, 0) / max_val * 100)
+        pct_u <- round(max(u, 0) / max_val * 100)
+        col_s <- col_saldo(s)
         is_cur <- (i == mese_corrente)
-        is_fut <- (i >= mese_corrente)
+        is_fut <- (i > mese_corrente)
+
+        border_style <- if (is_cur)
+          "border:2px solid #1e3a5f; border-radius:8px; background:white; padding:10px; box-shadow:0 2px 6px rgba(30,58,95,0.15)"
+        else
+          "border:1px solid #dee2e6; border-radius:8px; background:white; padding:10px"
+
         div(
-          class = paste("saldo-tile", if (is_cur) "saldo-tile--current"),
-          div(class = "tile-mese", MESI_BREVI[i]),
-          div(class = "tile-valore", style = paste0("color:", col), fmt_saldo(s)),
-          if (is_fut) div(class = "tile-prev", "prev.") else NULL
+          class = "col-6 col-md-4 col-lg-3 col-xl-2",
+          div(
+            style = border_style,
+            # Intestazione mese
+            div(
+              class = "text-center mb-2",
+              style = if (is_cur) "font-weight:700; color:#1e3a5f" else "font-weight:600; color:#495057",
+              MESI_BREVI[i],
+              if (is_cur) tags$span(
+                style = "font-size:0.6rem; color:#1e3a5f; margin-left:4px", "cur."
+              ) else if (is_fut) tags$span(
+                style = "font-size:0.6rem; color:#adb5bd; margin-left:4px", "prev."
+              ) else NULL
+            ),
+            # Barra Entrate
+            div(
+              class = "d-flex align-items-center gap-1 mb-1",
+              tags$span(style = "font-size:0.65rem; color:#27ae60; min-width:10px; font-weight:600", "E"),
+              div(
+                style = "flex:1; height:7px; background:#e9ecef; border-radius:4px; overflow:hidden",
+                div(style = paste0("width:", pct_e, "%; height:100%; background:#27ae60"))
+              ),
+              tags$span(style = "font-size:0.65rem; color:#27ae60; text-align:right; min-width:38px", fmt_eur_compact(e))
+            ),
+            # Barra Uscite
+            div(
+              class = "d-flex align-items-center gap-1 mb-2",
+              tags$span(style = "font-size:0.65rem; color:#e74c3c; min-width:10px; font-weight:600", "U"),
+              div(
+                style = "flex:1; height:7px; background:#e9ecef; border-radius:4px; overflow:hidden",
+                div(style = paste0("width:", pct_u, "%; height:100%; background:#e74c3c"))
+              ),
+              tags$span(style = "font-size:0.65rem; color:#e74c3c; text-align:right; min-width:38px", fmt_eur_compact(u))
+            ),
+            # Saldo
+            tags$hr(style = "margin:6px 0; border-color:#dee2e6"),
+            div(
+              class = "text-center fw-bold",
+              style = paste0("font-size:0.85rem; color:", col_s),
+              paste0("€ ", fmt_saldo(s))
+            )
+          )
         )
       })
-      div(class = "saldo-strip", tiles)
+
+      div(class = "row g-2 p-2", cards)
     })
 
     # Line chart
@@ -209,7 +193,7 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
 
     # Tabella voci per mese
     output$tabella_voci <- renderUI({
-      
+
       entrate <- rv$entrate
       uscite  <- rv$uscite
 
@@ -230,18 +214,21 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
         return(p(class = "text-muted p-3", "Nessun dato disponibile."))
       }
 
+      tot_uscite_annuo <- sum(u_agg$importo, na.rm = TRUE)
+
       make_header <- function() {
         tags$tr(
           tags$th(style = "min-width:130px", "Voce"),
           lapply(MESI_BREVI, function(m) tags$th(class = "text-center", style = "min-width:60px", m)),
-          tags$th(class = "text-center", style = "min-width:80px; border-left:2px solid #dee2e6", "Totale")
+          tags$th(class = "text-center", style = "min-width:80px; border-left:2px solid #dee2e6", "Totale"),
+          tags$th(class = "text-center", style = "min-width:50px; color:#6c757d", "%")
         )
       }
 
       make_section_hdr <- function(label, bg, txt_class, icon_cls) {
         tags$tr(
           tags$td(
-            colspan = 14,
+            colspan = 15,
             class   = paste("fw-semibold small py-1 px-2", txt_class),
             style   = paste0("background:", bg, "; border-top:2px solid #dee2e6"),
             tags$i(class = paste(icon_cls, "me-1")), label
@@ -249,7 +236,7 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
         )
       }
 
-      make_row <- function(t, agg_df, color_style) {
+      make_row <- function(t, agg_df, color_style, tot_ref = NULL) {
         row_data <- agg_df |> filter(tipologia == t)
         cells <- lapply(1:12, function(m) {
           v <- row_data |> filter(mese == m) |> pull(importo)
@@ -259,6 +246,16 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
             tags$td(class = "text-center", style = color_style, fmt_eur(v))
         })
         totale <- sum(row_data$importo, na.rm = TRUE)
+        pct_cell <- if (!is.null(tot_ref) && tot_ref > 0) {
+          pct <- round(totale / tot_ref * 100, 1)
+          tags$td(
+            class = "text-center text-muted small",
+            style = "border-left:1px solid #dee2e6",
+            paste0(pct, "%")
+          )
+        } else {
+          tags$td(class = "text-center text-muted small", style = "border-left:1px solid #dee2e6", "—")
+        }
         tags$tr(
           tags$td(t),
           cells,
@@ -266,7 +263,8 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
             class = "text-center fw-bold",
             style = paste0(color_style, "; border-left:2px solid #dee2e6"),
             fmt_eur(totale)
-          )
+          ),
+          pct_cell
         )
       }
 
@@ -279,7 +277,7 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
         tbody_rows <- c(
           tbody_rows,
           list(make_section_hdr("Entrate", "#f0faf4", "text-success", "bi bi-arrow-up-circle-fill")),
-          lapply(tipi_e, make_row, agg_df = e_agg, color_style = col_e)
+          lapply(tipi_e, make_row, agg_df = e_agg, color_style = col_e, tot_ref = sum(e_agg$importo, na.rm = TRUE))
         )
       }
 
@@ -287,7 +285,7 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
         tbody_rows <- c(
           tbody_rows,
           list(make_section_hdr("Uscite", "#fdf0f0", "text-danger", "bi bi-arrow-down-circle-fill")),
-          lapply(tipi_u, make_row, agg_df = u_agg, color_style = col_u)
+          lapply(tipi_u, make_row, agg_df = u_agg, color_style = col_u, tot_ref = tot_uscite_annuo)
         )
       }
 
@@ -301,5 +299,5 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
     })
 
   })
-  
+
 }

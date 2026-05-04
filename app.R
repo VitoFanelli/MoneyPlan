@@ -12,7 +12,6 @@ source("R/calculations.R")
 source("R/data_utils.R")
 source("R/mod_dashboard.R")
 source("R/mod_entrate_uscite.R")
-source("R/mod_vista_annuale.R")
 source("R/mod_simulazione.R")
 
 # ── Theme ───────────────────────────────────────────────────────────────────
@@ -51,7 +50,6 @@ ui <- page_navbar(
 
   nav_panel("Dashboard",      mod_dashboard_ui("dash")),
   nav_panel("Entrate/Uscite", mod_entrate_uscite_ui("eu")),
-  nav_panel("Vista Annuale",  mod_vista_annuale_ui("va")),
   nav_panel("Simulazione",    mod_simulazione_ui("sim")),
 
   nav_spacer(),
@@ -266,7 +264,6 @@ server <- function(input, output, session) {
   # ── Modules ─────────────────────────────────────────────────────────────────
   mod_dashboard_server("dash", rv, mensile, capitale_df)
   mod_entrate_uscite_server("eu", rv)
-  mod_vista_annuale_server("va", rv, mensile, capitale_df)
   mod_simulazione_server("sim",  rv, mensile, capitale_df)
 }
 
