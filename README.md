@@ -1,5 +1,7 @@
 # MoneyPlan
 
+**Versione:** v1.0 — Maggio 2026
+
 App Shiny per la pianificazione finanziaria personale. Permette di registrare entrate e uscite mensili, monitorare l'andamento del capitale nel corso dell'anno e simulare scenari alternativi.
 
 ## Funzionalità
