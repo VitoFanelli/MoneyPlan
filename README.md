@@ -20,7 +20,7 @@ I dati vengono salvati in locale nella cartella `data/` in formato Feather.
 
 Esegui `run.bat` con doppio clic.
 
-Al primo avvio `renv` installa automaticamente tutte le dipendenze. Le volte successive l'avvio è immediato.
+Al primo avvio `renv` installa automaticamente tutte le dipendenze (serve una connessione ad Internet). Le volte successive l'avvio è immediato e l'app funziona anche offline.
 
 Per chiudere l'app usa il pulsante rosso in alto a destra nell'interfaccia.
 
