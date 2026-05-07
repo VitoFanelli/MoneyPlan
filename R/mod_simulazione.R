@@ -55,12 +55,12 @@ mod_simulazione_ui <- function(id) {
           div(
             class = "p-3",
 
-            h6(class = "text-success mb-2", tags$i(class = "bi bi-arrow-up"), " Entrate mensili"),
+            h6(class = "text-success mb-2", icon("arrow-up"), " Entrate mensili"),
             uiOutput(ns("editor_e")),
 
             tags$hr(),
 
-            h6(class = "text-danger mb-2", tags$i(class = "bi bi-arrow-down"), " Uscite mensili"),
+            h6(class = "text-danger mb-2", icon("arrow-down"), " Uscite mensili"),
             uiOutput(ns("editor_u")),
 
             div(

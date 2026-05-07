@@ -1,4 +1,4 @@
-DATA_DIR <- "data"
+DATA_DIR <- normalizePath("data", mustWork = FALSE)
 
 .ensure_dir <- function() {
   if (!dir.exists(DATA_DIR)) dir.create(DATA_DIR, recursive = TRUE)

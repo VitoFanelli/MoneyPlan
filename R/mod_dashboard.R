@@ -276,7 +276,7 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
       if (length(tipi_e) > 0) {
         tbody_rows <- c(
           tbody_rows,
-          list(make_section_hdr("Entrate", "#f0faf4", "text-success", "bi bi-arrow-up-circle-fill")),
+          list(make_section_hdr("Entrate", "#f0faf4", "text-success", "fas fa-arrow-circle-up")),
           lapply(tipi_e, make_row, agg_df = e_agg, color_style = col_e, tot_ref = sum(e_agg$importo, na.rm = TRUE))
         )
       }
@@ -284,7 +284,7 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
       if (length(tipi_u) > 0) {
         tbody_rows <- c(
           tbody_rows,
-          list(make_section_hdr("Uscite", "#fdf0f0", "text-danger", "bi bi-arrow-down-circle-fill")),
+          list(make_section_hdr("Uscite", "#fdf0f0", "text-danger", "fas fa-arrow-circle-down")),
           lapply(tipi_u, make_row, agg_df = u_agg, color_style = col_u, tot_ref = tot_uscite_annuo)
         )
       }

@@ -1,3 +1,7 @@
-setwd("D:/Claude/apps/MoneyPlan")
-renv::load()
+if (!requireNamespace("renv", quietly = TRUE)) {
+  install.packages("renv")
+}
+
+renv::restore()
+
 shiny::runApp(launch.browser = TRUE)

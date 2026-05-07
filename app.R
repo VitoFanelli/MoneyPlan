@@ -34,18 +34,17 @@ ui <- page_navbar(
   id    = "nav",
 
   title = tags$span(
-    tags$i(class = "bi bi-coin-stack"),
+    icon("coins"),
     " MoneyPlan"
   ),
 
   theme = tema,
 
   header = tagList(
-    tags$link(
-      rel  = "stylesheet",
-      href = "https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    ),
-    tags$link(rel = "stylesheet", href = "style.css")
+    tags$link(rel = "stylesheet", href = "style.css"),
+    tags$script(HTML(
+      "Shiny.addCustomMessageHandler('closeWindow', function(msg) { window.close(); });"
+    ))
   ),
 
   nav_panel("Dashboard",      mod_dashboard_ui("dash")),
@@ -53,6 +52,26 @@ ui <- page_navbar(
   nav_panel("Simulazione",    mod_simulazione_ui("sim")),
 
   nav_spacer(),
+
+  nav_item(
+    actionButton(
+      "btn_quit",
+      icon("power-off"),
+      class = "btn btn-danger btn-sm rounded-circle me-1",
+      style = "width:36px;height:36px;padding:0;",
+      title = "Chiudi applicazione"
+    )
+  ),
+
+  nav_item(
+    actionButton(
+      "btn_refresh",
+      icon("rotate"),
+      class = "btn btn-secondary btn-sm rounded-circle me-1",
+      style = "width:36px;height:36px;padding:0;",
+      title = "Ricarica dati"
+    )
+  ),
 
   nav_item(
     actionButton(
@@ -92,6 +111,34 @@ server <- function(input, output, session) {
   # ── Shared computations ─────────────────────────────────────────────────────
   mensile     <- reactive(df_mensile(rv$entrate, rv$uscite))
   capitale_df <- reactive(df_capitale(mensile(), rv$capitale_iniziale))
+
+  # ── Chiudi app ────────────────────────────────────────────────────────────
+  observeEvent(input$btn_quit, {
+    showModal(modalDialog(
+      title     = "Chiudi applicazione",
+      easyClose = TRUE,
+      footer    = tagList(
+        modalButton("Annulla"),
+        actionButton("btn_quit_confirm", "Chiudi", class = "btn btn-danger")
+      ),
+      p("Vuoi davvero chiudere MoneyPlan?")
+    ))
+  })
+
+  observeEvent(input$btn_quit_confirm, {
+    removeModal()
+    session$sendCustomMessage("closeWindow", list())
+    shiny::stopApp()
+  })
+
+  # ── Refresh dati ──────────────────────────────────────────────────────────
+  observeEvent(input$btn_refresh, {
+    rv$entrate           <- load_entrate()
+    rv$uscite            <- load_uscite()
+    rv$capitale_iniziale <- load_capitale()
+    rv$tipi              <- load_tipi()
+    showNotification("Dati ricaricati.", type = "message", duration = 2)
+  })
 
   # ── Configurazione — modal ─────────────────────────────────────────────────
   observeEvent(input$btn_cap_main, {
