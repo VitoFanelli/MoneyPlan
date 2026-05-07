@@ -24,8 +24,8 @@ tema <- bs_theme(
   success    = "#27ae60",
   danger     = "#e74c3c",
   warning    = "#f5a623",
-  base_font  = font_google("Inter"),
-  heading_font = font_google("Inter")
+  base_font    = "system-ui, sans-serif",
+  heading_font = "system-ui, sans-serif"
 )
 
 # ── UI ───────────────────────────────────────────────────────────────────────

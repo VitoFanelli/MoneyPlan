@@ -98,7 +98,7 @@ mod_entrate_uscite_server <- function(id, rv) {
               class = "row g-4",
               div(
                 class = "col-md-6",
-                h6(class = "text-uppercase small text-muted mb-2", "Entrate"),
+                h6(class = "text-uppercase small text-muted fw-bold mb-2", "Entrate"),
                 e_rows,
                 tags$button(
                   type  = "button",
@@ -112,7 +112,7 @@ mod_entrate_uscite_server <- function(id, rv) {
               ),
               div(
                 class = "col-md-6",
-                h6(class = "text-uppercase small text-muted mb-2", "Uscite"),
+                h6(class = "text-uppercase small text-muted fw-bold mb-2", "Uscite"),
                 u_rows,
                 tags$button(
                   type  = "button",
