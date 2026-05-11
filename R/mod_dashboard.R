@@ -8,12 +8,10 @@ mod_dashboard_ui <- function(id) {
   else
     paste0("Capitale corrente (", MESI_LUNGHI[m_prec], ")")
 
-  risp_label <- if (m_prec < 1)
-    "Risparmio mensile"
-  else if (m_prec == 1)
-    paste0("Risparmio mensile (", MESI_BREVI[1], ")")
+  risp_hint <- if (m_prec <= 1)
+    MESI_BREVI[1]
   else
-    paste0("Risparmio mensile (", MESI_BREVI[1], " - ", MESI_BREVI[m_prec], ")")
+    paste0(MESI_BREVI[1], " - ", MESI_BREVI[m_prec])
 
   div(
     class = "container-fluid py-4",
@@ -25,20 +23,31 @@ mod_dashboard_ui <- function(id) {
         class = "kpi-main",
         div(class = "kpi-label", cap_label),
         div(class = "kpi-value", textOutput(ns("cap_txt"), inline = TRUE)),
-        div(class = "kpi-sub mt-1", textOutput(ns("var_txt"), inline = TRUE))
+        div(class = "kpi-sub mt-1", uiOutput(ns("var_txt")))
       ),
       div(
         class = "kpi-side",
         div(
           class = "kpi-box",
-          div(class = "kpi-label", risp_label),
+          div(class = "kpi-label", "Capitale di partenza"),
+          div(class = "kpi-value-sm", textOutput(ns("cap_inizio_txt"), inline = TRUE))
+        ),
+        div(
+          class = "kpi-box",
+          div(class = "kpi-label", "Risparmio mensile"),
           div(class = "kpi-value-sm", textOutput(ns("risp_txt"), inline = TRUE)),
-          div(class = "kpi-hint", "media anno")
+          div(class = "kpi-hint", risp_hint)
+        ),
+        div(
+          class = "kpi-box",
+          div(class = "kpi-label", "Risparmio mensile previsto"),
+          div(class = "kpi-value-sm", textOutput(ns("risp_prev_txt"), inline = TRUE)),
+          div(class = "kpi-hint", "Gen - Dic")
         ),
         div(
           class = "kpi-box",
           div(class = "kpi-label", "Stima capitale fine anno"),
-          div(class = "kpi-value-sm", textOutput(ns("stima_txt"), inline = TRUE))
+          uiOutput(ns("stima_txt"))
         )
       )
     ),
@@ -72,19 +81,46 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
       fmt_eur(capitale_attuale(capitale_df(), rv$capitale_iniziale))
     })
 
-    output$var_txt <- renderText({
-      v <- capitale_attuale(capitale_df(), rv$capitale_iniziale) - rv$capitale_iniziale
-      icona <- if (v >= 0) "▲ +" else "▼ "
-      paste0(icona, fmt_eur(abs(v)), " da inizio anno")
+    output$var_txt <- renderUI({
+      cap_att <- capitale_attuale(capitale_df(), rv$capitale_iniziale)
+      v       <- cap_att - rv$capitale_iniziale
+      icona   <- if (v >= 0) "▲ +" else "▼ "
+      color   <- if (v >= 0) "#27ae60" else "#e74c3c"
+      pct_str <- if (!is.null(rv$capitale_iniziale) && rv$capitale_iniziale != 0) {
+        pct <- v / rv$capitale_iniziale * 100
+        paste0(" (", sprintf("%+.1f", pct), "%)")
+      } else ""
+      HTML(paste0(
+        '<span style="color:', color, '; font-size:.85rem; font-weight:600">',
+        icona, fmt_eur(abs(v)), pct_str, " da inizio anno</span>"
+      ))
+    })
+
+    output$cap_inizio_txt <- renderText({
+      fmt_eur(rv$capitale_iniziale)
     })
 
     output$risp_txt <- renderText({
       fmt_eur(media_risparmio(mensile()))
     })
 
-    output$stima_txt <- renderText({
+    output$risp_prev_txt <- renderText({
+      fmt_eur(mean(mensile()$saldo))
+    })
+
+    output$stima_txt <- renderUI({
       cap <- df_capitale(mensile(), rv$capitale_iniziale)
-      fmt_eur(cap$capitale[12])
+      val <- cap$capitale[12]
+      v   <- val - rv$capitale_iniziale
+      pct_html <- if (!is.null(rv$capitale_iniziale) && rv$capitale_iniziale != 0) {
+        pct   <- v / rv$capitale_iniziale * 100
+        color <- if (v >= 0) "#27ae60" else "#e74c3c"
+        paste0(
+          '<div style="font-size:.75rem; margin-top:.15rem; color:', color, '; font-weight:700">',
+          sprintf("%+.1f", pct), "% vs cap. iniziale</div>"
+        )
+      } else ""
+      HTML(paste0('<div class="kpi-value-sm">', fmt_eur(val), "</div>", pct_html))
     })
 
     # Card mensili: barre entrate/uscite + saldo
