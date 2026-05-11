@@ -115,9 +115,10 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
       pct_html <- if (!is.null(rv$capitale_iniziale) && rv$capitale_iniziale != 0) {
         pct   <- v / rv$capitale_iniziale * 100
         color <- if (v >= 0) "#27ae60" else "#e74c3c"
+        icona <- if (v >= 0) "▲ +" else "▼ "
         paste0(
           '<div style="font-size:.75rem; margin-top:.15rem; color:', color, '; font-weight:700">',
-          sprintf("%+.1f", pct), "% vs cap. iniziale</div>"
+          icona, fmt_eur(abs(v)), " (", sprintf("%+.1f", pct), "%) da inizio anno</div>"
         )
       } else ""
       HTML(paste0('<div class="kpi-value-sm">', fmt_eur(val), "</div>", pct_html))
@@ -153,7 +154,7 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
               style = if (is_cur) "font-weight:700; color:#1e3a5f" else "font-weight:600; color:#495057",
               MESI_BREVI[i],
               if (is_cur) tags$span(
-                style = "font-size:0.6rem; color:#1e3a5f; margin-left:4px", "cur."
+                style = "font-size:0.6rem; color:#1e3a5f; margin-left:4px", "prev."
               ) else if (is_fut) tags$span(
                 style = "font-size:0.6rem; color:#adb5bd; margin-left:4px", "prev."
               ) else NULL
@@ -255,7 +256,10 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
       make_header <- function() {
         tags$tr(
           tags$th(style = "min-width:130px", "Voce"),
-          lapply(MESI_BREVI, function(m) tags$th(class = "text-center", style = "min-width:60px", m)),
+          lapply(seq_along(MESI_BREVI), function(i) {
+            sep <- if (i == mese_corrente) "border-left:3px solid #1e3a5f; " else ""
+            tags$th(class = "text-center", style = paste0(sep, "min-width:60px"), MESI_BREVI[i])
+          }),
           tags$th(class = "text-center", style = "min-width:80px; border-left:2px solid #dee2e6", "Totale"),
           tags$th(class = "text-center", style = "min-width:50px; color:#6c757d", "%")
         )
@@ -275,11 +279,12 @@ mod_dashboard_server <- function(id, rv, mensile, capitale_df) {
       make_row <- function(t, agg_df, color_style, tot_ref = NULL) {
         row_data <- agg_df |> filter(tipologia == t)
         cells <- lapply(1:12, function(m) {
-          v <- row_data |> filter(mese == m) |> pull(importo)
+          v   <- row_data |> filter(mese == m) |> pull(importo)
+          sep <- if (m == mese_corrente) "border-left:3px solid #1e3a5f; " else ""
           if (length(v) == 0)
-            tags$td(class = "text-center text-muted small", "—")
+            tags$td(class = "text-center text-muted small", style = sep, "—")
           else
-            tags$td(class = "text-center", style = color_style, fmt_eur(v))
+            tags$td(class = "text-center", style = paste0(sep, color_style), fmt_eur(v))
         })
         totale <- sum(row_data$importo, na.rm = TRUE)
         pct_cell <- if (!is.null(tot_ref) && tot_ref > 0) {
