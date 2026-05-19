@@ -161,7 +161,7 @@ mod_entrate_uscite_server <- function(id, rv) {
             inputId  = ns("tipo_e"),
             label    = "Tipologia",
             choices  = sort(rv$tipi_entrate),
-            selected = head(rv$tipi_entrate, 1),
+            selected = head(sort(rv$tipi_entrate), 1),
             multiple = FALSE,
             options  = pickerOptions(
               liveSearch  = FALSE,
@@ -235,7 +235,7 @@ mod_entrate_uscite_server <- function(id, rv) {
             inputId  = ns("tipo_u"),
             label    = "Tipologia",
             choices  = sort(rv$tipi_uscite),
-            selected = head(rv$tipi_uscite, 1),
+            selected = head(sort(rv$tipi_uscite), 1),
             multiple = FALSE,
             options  = pickerOptions(
               liveSearch  = FALSE,

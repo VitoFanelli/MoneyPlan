@@ -1,4 +1,4 @@
-*.feather
+*.rds
 .claude/
 run.Rout
 renv/
